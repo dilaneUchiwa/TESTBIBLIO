@@ -1,5 +1,11 @@
-import { Button, Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { ViewIcon } from "@chakra-ui/icons";
+import { Button, Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr, useDisclosure, useToast } from "@chakra-ui/react";
+import { DeleteIcon, ViewIcon } from "@chakra-ui/icons";
+import ButtonWithConfirm from "../ButtonWithConfirmation";
+import axios from "../../api/axios";
+import ModalLivre from "./ModalLivre";
+import { useState } from "react";
+
+const API_URL="api/livre";
 
 export interface Livre{
     id:string,
@@ -21,6 +27,37 @@ interface PropType{
 }
 
 function LivreTable({livres}:PropType){
+
+    const [modifyClick,setModifyClick] = useState(false);
+
+    const toast=useToast();
+    const {onOpen,isOpen,onClose}=useDisclosure();
+
+
+    const handleDeleteClick=(id:string)=>{
+                      
+        axios.delete(
+          API_URL,
+          {data:{
+            id:id
+          }}
+        ).then((response)=>{
+            console.log(response)
+            toast({
+              status:"success",
+              title:"succes",
+              description:`Le livre d'identifiant ${id} a bien été supprimée !`,
+              duration: 10000,
+              isClosable:true
+    
+            })
+        })
+        .catch(error=>{
+          console.log(error)
+        })
+    
+      }
+
     return (
         livres.length===0?
         <div >
@@ -61,8 +98,9 @@ function LivreTable({livres}:PropType){
                                 <Td>{livre.updatedAt || 'Non definie'}</Td>
                                 <Td>
                                     <div className="d-flex justify-content-around">
-                                        <Button variant={'update'} >Modifier</Button>
-                                        <Button variant={'delete'} >supprimer</Button>
+                                        <Button onClick={e=>{setModifyClick(true);onOpen();}} variant={'update'} >Modifier</Button>
+                                        {modifyClick && <ModalLivre onClose={onClose} onOpen={onOpen} isOpen={isOpen} setModifyClick={()=>setModifyClick(false)} livre={livre}/>}
+                                        <ButtonWithConfirm variant={'delete'}  icon={<DeleteIcon />} action={`supprimer le livre ${livre.titre}`} handleAction={()=>handleDeleteClick(livre.id)} texte="supprimer"/>
                                     </div>
                                 </Td>
                             </Tr>

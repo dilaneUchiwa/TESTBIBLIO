@@ -24,14 +24,14 @@ const useLivre=()=>{
 
 function Livre(){
     
-    // let livres=useLivre();
+    let livres=useLivre();
 
     return ( 
         <>
             <Header />
             <Navigation />
             <LivreHeader />
-            <LivreTable livres={[]} />
+            <LivreTable livres={livres} />
         </>
      );
 }

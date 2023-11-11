@@ -6,6 +6,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `config`
+
+change axios config ib src/api/axios with server host and port
+
+
 ### `npm start`
 
 Runs the app in the development mode.\

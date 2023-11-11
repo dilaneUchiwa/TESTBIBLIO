@@ -41,6 +41,13 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
 
     const handleSubmit=(e:FormEvent)=>{
         e.preventDefault();
+
+        // const formData=new FormData();
+
+        // formData.append('image',image)
+
+        // console.log(formData)
+
         axios.post(
             API_URL,
             {
@@ -87,10 +94,12 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
             .catch(error=>console.log(error))
 
         if(livre){
-            setTitre("");
-        setAnnee(1900);
-        setEdition("");
-        setImage(null);
+            setTitre(livre.titre);
+            setAnnee(livre.annee);
+            setEdition(livre.edition);
+            // setSelectedAuteur(livre.id);
+            // setSelectedGenre(livre.id)
+            setImage(null);
         }        
     },[])
 
@@ -112,7 +121,7 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
         <Modal isOpen={isOpen} onClose={customOnClose} closeOnOverlayClick={false} isCentered >
             <ModalOverlay/>
             <ModalContent>
-                <ModalHeader>Nouveau Livre</ModalHeader>
+                <ModalHeader>{setModifyClick?"Modifier Livre" : "Nouveau Livre" }</ModalHeader>
                 <ModalCloseButton />
                 <form onSubmit={handleSubmit}>
                 <ModalBody pb={6}>
