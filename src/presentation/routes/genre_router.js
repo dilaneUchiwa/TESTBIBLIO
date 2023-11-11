@@ -7,6 +7,8 @@ const { addGenreSchema, getGenreSchema } = require('../../domain/schemas/Genre')
 
 const router=express.Router();
 
+// on place un middleware pour verifier le cors des requetes
+
 router.post('',validateSchema(addGenreSchema()),add_genre);
 router.get('',validateSchema(getGenreSchema()),get_genre);
 router.get('/all',retrieve_genre);

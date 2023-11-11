@@ -12,8 +12,8 @@ const livreRouter=require('../src/presentation/routes/livre_router');
 // on cree l'application express et on la parametre
 const app=express();
 
-app.use(express.json()); //
-app.use(cors());         //
+app.use(express.json()); // cors des requetes en json
+app.use(cors());         // controle des origines d'appel
 
 
 // on teste la connexon avec la base de donnee en recuperant notre fonction connection

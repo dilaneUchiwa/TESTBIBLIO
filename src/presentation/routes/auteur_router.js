@@ -7,6 +7,8 @@ const { addAuteurSchema, getAuteurSchema } = require('../../domain/schemas/Auteu
 
 const router=express.Router();
 
+// on place un middleware pour verifier le cors des requetes
+
 router.post('',validateSchema(addAuteurSchema()),add_auteur);
 router.get('',validateSchema(getAuteurSchema()),get_auteur);
 router.get('/all',retrieve_auteur);
