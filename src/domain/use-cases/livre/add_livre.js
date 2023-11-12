@@ -1,11 +1,11 @@
 const Livre = require("../../models/Livre")
 
 exports.add_livre=(req,res)=>{
-    console.log(req.file)
-    Livre.create(
+   const path=req.file?req.file.path:null;
+   Livre.create(
         {
             titre: req.body.titre,
-            //image: req.body.image,
+            image: path,
             annee:req.body.annee,
             edition:req.body.edition,
             auteurId:req.body.auteurId,

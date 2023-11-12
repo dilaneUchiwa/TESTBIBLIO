@@ -22,7 +22,7 @@ function deleteLivreSchema(){
 }
 function searchLivreSchema(){
     return z.object({
-        key:z.enum(["titre","auteur","genre"],{invalid_type_error :"keymust be titre, auteur or genre"}),
+        key:z.enum(["titre","auteur","genre","key"],{invalid_type_error :"keymust be titre, auteur ,key or genre"}),
         value:z.string({required_error: "value is required",invalid_type_error: "value must be a string",})
     })
 }

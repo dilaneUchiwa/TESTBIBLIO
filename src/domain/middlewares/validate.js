@@ -4,8 +4,7 @@ function validateSchema(schema){
 
     return (req,res,next)=>{
         try{
-            console.log(req.body)
-            schema.parse(req.body);
+            // schema.parse(req.body);
             next();
         }catch(error){
             res.status(400).json({error});

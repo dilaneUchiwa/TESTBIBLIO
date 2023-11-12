@@ -8,13 +8,14 @@ const { connection } = require('./domain/utils/connection');
 const auteurRouter=require('../src/presentation/routes/auteur_router');
 const genreRouteur=require('../src/presentation/routes/genre_router');
 const livreRouter=require('../src/presentation/routes/livre_router');
+const path = require('path');
 
 // on cree l'application express et on la parametre
 const app=express();
 
 app.use(express.json()); // cors des requetes en json
 app.use(cors());         // controle des origines d'appel
-
+app.use(express.static(path.join(__dirname,'public'))); // emplacement de sauvegarde des fichiers servit aux clients
 
 // on teste la connexon avec la base de donnee en recuperant notre fonction connection
 

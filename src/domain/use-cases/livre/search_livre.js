@@ -6,14 +6,20 @@ const {Op} = require ('sequelize');
 exports.search_livre=(req,res)=>{
    const {key , value} = req.body;
    
-    key==='titre' && Livre.findAll({where:{titre:{[Op.like]:`%${value}%`}}})
+    key==='titre' && Livre.findAll({where:{titre:{[Op.like]:`%${value}%`},include:[
+      {model:Auteur},
+      {model:Genre}
+    ]}})
       .then((livres)=>{
          if(!livres) res.status(404).send({message:'Not Found'})
          else res.status(200).send(livres)
       })
       .catch(error=>res.status(500).send({error}))
 
-   key==='auteur' && Auteur.findAll({where :{nom:{[Op.like]:`%${value}%`}}})
+   key==='auteur' && Auteur.findAll({where :{nom:{[Op.like]:`%${value}%`},include:[
+      {model:Auteur},
+      {model:Genre}
+    ]}})
       .then((auteurs)=>{
 
          const promises = auteurs.map((auteur) => {
@@ -32,7 +38,10 @@ exports.search_livre=(req,res)=>{
       .catch(error=>res.status(500).send({error}))
      
 
-   key==='genre' && Genre.findAll({where :{nom:{[Op.like]:`%${value}%`}}})
+   key==='genre' && Genre.findAll({where :{nom:{[Op.like]:`%${value}%`}},include:[
+      {model:Auteur},
+      {model:Genre}
+    ]})
    .then((genres)=>{
 
       const promises = genres.map((genre) => {
@@ -49,5 +58,34 @@ exports.search_livre=(req,res)=>{
 
    })
    .catch(error=>res.status(500).send({error}))
-  
+
+   if(key === "key"){
+   const searchValue = `%${value}%`;
+
+    const query = {
+      include: [
+        { model: Auteur },
+        { model: Genre }
+      ]
+    };
+
+    if (value) {
+      query.where = {
+        [Op.or]: [
+          { titre: { [Op.like]: searchValue } },
+          { '$auteur.nom$': { [Op.like]: searchValue } },
+          { '$genre.nom$': { [Op.like]: searchValue } }
+        ]
+      };
+    }
+
+    Livre.findAndCountAll(query)
+      .then((result) => {
+        const livres = result.rows;
+
+        res.status(200).send(livres);
+        
+      })
+      .catch((error) => res.status(500).send({ error }));
+   }
 }
