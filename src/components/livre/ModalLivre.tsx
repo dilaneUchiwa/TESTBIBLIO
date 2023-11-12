@@ -13,10 +13,9 @@ interface PropType{
     onOpen:()=>void
     isOpen:boolean
     onClose:()=>void
-    setModifyClick:any
     livre: null | Livre
 }
-function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
+function ModalLivre({onOpen,isOpen,onClose,livre}:PropType){
     
     const [titre,setTitre]=useState("");
     const [annee,setAnnee]=useState(0);
@@ -38,25 +37,36 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
     const toast= useToast()
 
 
-
     const handleSubmit=(e:FormEvent)=>{
         e.preventDefault();
 
-        // const formData=new FormData();
+        let formData=new FormData();
 
-        // formData.append('image',image)
+        formData.append('titre',titre);
+        formData.append('annee',annee);
+        formData.append('edition',edition);
+        formData.append('auteurId',selectedAuteur);
+        formData.append('genreId',selectedGenre);
+        formData.append('image',image,image?.name);
 
-        // console.log(formData)
+        // {
+        //     titre : titre,
+        //     annee:annee,
+        //     edition:edition,
+        //     image:image,
+        //     auteurId:selectedAuteur,
+        //     genreId:selectedGenre
+        // }
+
+        
 
         axios.post(
             API_URL,
-            {
-                titre : titre,
-                annee:annee,
-                edition:edition,
-                image:image,
-                auteurId:selectedAuteur,
-                genreId:selectedGenre
+            formData,
+            {   data:formData,
+                headers : {
+                    "Content-Type":"multipart/form-data"
+                }
             }
         ).then((response)=>{
             toast({
@@ -97,9 +107,14 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
             setTitre(livre.titre);
             setAnnee(livre.annee);
             setEdition(livre.edition);
-            // setSelectedAuteur(livre.id);
-            // setSelectedGenre(livre.id)
-            setImage(null);
+            setSelectedAuteur(livre.auteur.id);
+            setSelectedGenre(livre.genre.id)
+            try{
+                setImage(new File());
+            }
+            catch(error){
+                console.log(error);
+            }
         }        
     },[])
 
@@ -112,7 +127,7 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
         setSelectedGenre('');
         setErrMessage("");
         setIsDuplicate(false)
-        livre!==null && setModifyClick();
+        //livre!==null && setModifyClick();
         onClose()    
     }
 
@@ -121,7 +136,7 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
         <Modal isOpen={isOpen} onClose={customOnClose} closeOnOverlayClick={false} isCentered >
             <ModalOverlay/>
             <ModalContent>
-                <ModalHeader>{setModifyClick?"Modifier Livre" : "Nouveau Livre" }</ModalHeader>
+                <ModalHeader>{livre?"Modifier Livre" : "Nouveau Livre" }</ModalHeader>
                 <ModalCloseButton />
                 <form onSubmit={handleSubmit}>
                 <ModalBody pb={6}>
@@ -172,10 +187,19 @@ function ModalLivre({onOpen,isOpen,onClose,livre,setModifyClick}:PropType){
                                 l'annee entre n'est pas valide
                             </FormErrorMessage>
                         </FormControl>`
-                        <FormControl>
-                            <FormLabel>Image</FormLabel>
-                            <Input type="file" onChange={e=>setImage(e.target.files![0])} />
-                        </FormControl>
+                        
+                        <div className='row'>
+                            <div className={image===undefined? "col-12":"col"}>
+                                <FormControl>
+                                    <FormLabel>Image</FormLabel>
+                                    <Input type="file" onChange={e=>setImage(e.target.files![0])} />
+                                </FormControl>
+                            </div>
+                            <div className='col'>
+                                 {image!==undefined && livre==null &&<> <img className="img-fluid border rounded " src={ URL.createObjectURL(image) } alt={image?.name} /> <span>{image.name}</span> </> } 
+                                 {livre!==null &&<> <img className="img-fluid border rounded " src={`${axios.defaults.baseURL}/${livre.image}`} alt={livre.image} /> <span>{livre.image}</span> </> } 
+                            </div>
+                        </div>
                         { errMessage && <MyAlert status='error' title="Erreur" description={errMessage} />}
                 </ModalBody>
                 <ModalFooter>

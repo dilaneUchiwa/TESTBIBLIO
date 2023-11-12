@@ -11,7 +11,7 @@ function App() {
     <ChakraProvider theme={theme}>
         <BrowserRouter>
           <Routes>
-              <Route path='/' element={<Home />} />
+              <Route path='/' element={<Livre />} />
               <Route path='/livre' element={<Livre />} />
           </Routes>
         </BrowserRouter>

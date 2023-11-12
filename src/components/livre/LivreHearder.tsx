@@ -1,10 +1,31 @@
 import { AddIcon, Search2Icon } from "@chakra-ui/icons";
 import { Button, Divider, Input, InputGroup, InputLeftElement, InputRightAddon, useDisclosure } from "@chakra-ui/react";
 import ModalLivre from "./ModalLivre";
+import { useState } from "react";
+import axios from "../../api/axios";
 
-function LivreHeader(){
+const API_URL='api/livre/search';
+
+interface PropType{
+    setLivres:(val:any)=>void
+}
+
+
+function LivreHeader({setLivres}:PropType){
     const {onOpen,isOpen,onClose}=useDisclosure();
+    const [key,setKey]=useState('');
 
+    const handleSearch=(e:any)=>{
+        const temp=e.target.value.trim();
+        setKey(temp);
+
+        axios.post(API_URL,{"key":"key","value":key})
+        .then(response=>{
+            setLivres(response.data);
+        })
+        .catch(error=>console.log(error))
+    
+    }
     return (
      <div>   
         <div className="row pb-4 \" >
@@ -17,7 +38,7 @@ function LivreHeader(){
                     pointerEvents="none"
                     children={<Search2Icon color="gray.600" />}
                     />
-                    <Input className="" type="text" placeholder="Rechercher par le titre , l'auteur ou le genre..." border="1px solid #949494" />
+                    <Input className="" type="text" placeholder="Rechercher par le titre , l'auteur ou le genre..." border="1px solid #949494" value={key} onChange={handleSearch}/>
                     <InputRightAddon
                     p={0}
                     border="none"
